@@ -21,6 +21,7 @@ const Testimonials = () => {
         .then(res=>res.json())
         .then(data => setReviews(data))
     })
+    
     return (
         <section className="my-20">
             <SectionTitle subHeading={'What Our Clients Say'} heading={'testimonials'}/>
