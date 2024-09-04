@@ -5,7 +5,8 @@ import Featured from "../Featured/Featured";
 import PopularMenu from "../PopularMenu/PopularMenu";
 import Testimonials from "../Testimonials/Testimonials";
 
-const Home = () => {
+const Home = ({children}) => {
+       console.log(children)
     return (
            <>
              <Helmet>

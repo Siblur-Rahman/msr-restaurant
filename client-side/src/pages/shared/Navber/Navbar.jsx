@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
+import useAuth from "../../../hooks/useAuth";
 
 const Navbar = () => {
+    const {user, logOut} = useAuth();
+    const handleLogOut = () =>{
+        logOut()
+        .then(() =>{})
+        .catch(error => console.log(error))
+    }
     const links=[
         {
             title:"Home",
@@ -8,12 +15,20 @@ const Navbar = () => {
         },
         {
             title:"Menu",
-            path:"/menu"
+            path:"menu"
         },
         {
             title:"Order",
-            path:"/order/salad"
-        }
+            path:"order/salad"
+        },
+        {
+            title:"Secret",
+            path:"secret"
+        },
+        {
+            title:"",
+            path:"/"
+        },
     ]
     return (
 <>
@@ -38,6 +53,8 @@ const Navbar = () => {
                 tabIndex={0}
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
             {links.map((link, ind) =><li><Link to={link.path}>{link.title}</Link></li>)}
+            {user && <li><Link to="logout">Log out</Link></li>}
+            {!user && <li><Link to="login">Login</Link></li>}
             </ul>
             </div>
             <a className="btn btn-ghost text-xl">MSR Restuarant</a>
@@ -45,7 +62,9 @@ const Navbar = () => {
         <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1">
             {links.map((link, ind) =><li><Link to={link.path}>{link.title}</Link></li>)}
+            {!user && <li><Link to="login">Login</Link></li>}
             </ul>
+            {user && <button onClick={handleLogOut}>LogOut</button>}
         </div>
         <div className="navbar-end">
             <a className="btn">Button</a>
