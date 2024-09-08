@@ -9,8 +9,8 @@ const port = process.env.PROT || 5000;
 // middleware
 app.use(cors())
 app.use(express.json());
-// const uri = "mongodb://localhost:27017";
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ts8x6gb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = "mongodb://localhost:27017";
+// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ts8x6gb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -26,11 +26,11 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
      // Get the database and collection on which to run the operation
-     const menuCollection = client.db("mrsRestaurantDb").collection("menu");
-     const reviewsCollection = client.db("mrsRestaurantDb").collection("reviews");
+     const menuCollection = client.db("msrRestaurantDb").collection("menu");
+     const reviewsCollection = client.db("msrRestaurantDb").collection("reviews");
+     const cartsCollection = client.db("msrRestaurantDb").collection("carts");
     
      app.get('/menu', async (req, res) =>{
-        console.log('test')
         const result = await menuCollection.find().toArray();
         res.send(result)
      })
@@ -38,6 +38,20 @@ async function run() {
      app.get('/reviews', async(req, res) =>{
         const result = await reviewsCollection.find().toArray();
         res.send(result)
+     })
+
+    //  carts Collection
+    app.get("/carts", async (req, res) =>{
+      const email = req.query.email;
+      const query = {email: email}
+      const result = await cartsCollection.find(query).toArray();
+      res.send(result);
+    })
+    
+     app.post("/carts", async(req, res) =>{
+      const cartItem = req.body;
+      const result = await cartsCollection.insertOne(cartItem);
+      res.send(result)
      })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

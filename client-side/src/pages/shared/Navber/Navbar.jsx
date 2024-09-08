@@ -1,8 +1,28 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
+import { FaShoppingCart } from "react-icons/fa";
+// import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useCarts from './../../../hooks/useCarts';
+
 
 const Navbar = () => {
     const {user, logOut} = useAuth();
+    // const [cartsItems, setCartsItems] = useState([]);
+    // const axiosSequre = useAxiosSecure();
+    const [cart] = useCarts();
+    // useEffect(() =>{
+        // const getData = async () =>{
+        //     const {data} = await axiosSequre("/carts");
+        //     setCartsItems(data)
+        // }
+        // getData()
+
+        // axiosSequre("/carts")
+        // .then(res =>{
+        //     setCartsItems(res.data)
+        // })
+    // }, [])
     const handleLogOut = () =>{
         logOut()
         .then(() =>{})
@@ -62,6 +82,16 @@ const Navbar = () => {
         <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1">
             {links.map((link, ind) =><li><Link to={link.path}>{link.title}</Link></li>)}
+
+            <li><Link to="/dashboard/cart">
+                    <button className="btn">
+                    <FaShoppingCart />
+                        <div className="badge badge-secondary">
+                            {/* {cartsItems.length} */}
+                           + {cart.length}
+                            </div>
+                    </button>
+            </Link></li>
             {!user && <li><Link to="login">Login</Link></li>}
             </ul>
             {user && <button onClick={handleLogOut}>LogOut</button>}

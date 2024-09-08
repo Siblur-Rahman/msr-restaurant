@@ -6,7 +6,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 const Login = () => {
     const navigate = useNavigate();
     const location = useLocation()
-    const [disabled, setDisabled] = useState(true)
+    const [disabled, setDisabled] = useState(false)
     const {signIn} = useContext(AuthContext);
 
     const from = location.state?.from?.pathname || "/";
@@ -22,7 +22,7 @@ const Login = () => {
    
         else {
             alert('Captcha Does Not Match');
-            setDisabled(true)
+            setDisabled(false)
 
         }
     }
@@ -88,7 +88,7 @@ const Login = () => {
                 <label className="label">
                     <LoadCanvasTemplate />
                 </label>
-                <input onBlur={handleValidateCaptcha} type="text" name="captcha" placeholder="type the Captcha above" className="input input-bordered" required />
+                <input onBlur={handleValidateCaptcha} type="text" name="captcha" placeholder="type the Captcha above" className="input input-bordered" />
                 </div>
                 <div className="form-control mt-6">
                 <input disabled={disabled} type="submit" className="btn btn-primary" value={"Login"}/>

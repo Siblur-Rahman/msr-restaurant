@@ -10,6 +10,8 @@ import Login from '../pages/Login/Login';
 import SignUp from '../pages/SignUp/SignUp';
 import Secret from '../pages/shared/Secret';
 import PrivatRoute from './PrivatRoute';
+import Dashboard from '../Layout/Dashboard';
+import Cart from '../pages/Dashboard/Cart/Cart';
 export const router = createBrowserRouter([
     {
       path: "/",
@@ -21,7 +23,7 @@ export const router = createBrowserRouter([
         },
         {
             path:"menu",
-            element:<PrivatRoute><Menu/></PrivatRoute>
+            element:<Menu/>
         },
         {
             path:"order/:category",
@@ -41,4 +43,14 @@ export const router = createBrowserRouter([
         }
       ]
     },
+    {
+      path:"dashboard",
+      element:<Dashboard/>,
+      children:[
+        {
+          path:"cart",
+          element:<Cart/>
+        }
+      ]
+    }
   ]);
