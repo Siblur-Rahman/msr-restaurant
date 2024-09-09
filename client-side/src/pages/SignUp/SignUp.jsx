@@ -6,7 +6,9 @@ import { AuthContext } from '../../providers/AuthProvider';
 import { useForm } from 'react-hook-form';
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2';
+import useAxiosPublic from './../../hooks/useAxiosPublic';
 const SignUp = () => {
+    const axiosPublic = useAxiosPublic();
     const { createUser, updateUserProfile } = useContext(AuthContext);
     const {register, handleSubmit, reset, formState: { errors }, } = useForm();
     const navigate = useNavigate();
@@ -19,39 +21,49 @@ const SignUp = () => {
 
             updateUserProfile(data.name, data.photoURL)
             .then(() =>{
-                console.log("user profile update");
-                reset();
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Sign UP Successful",
-                    showConfirmButton: false,
-                    timer: 1500
-                  });
-                  navigate("/")
+                // create user entry in the Database
+                const userInfo = {
+                    name:data.name,
+                    email:data.email
+                }
+                axiosPublic.post('/signup', userInfo)
+                .then(res =>{
+                    if(res.data.insertedId){
+                        console.log('To Database')
+                        reset();
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Sign UP Successful",
+                            showConfirmButton: false,
+                            timer: 1500
+                          });
+                          navigate("/")
+                    }
+                })
             })
             .catch(error => console.log(error))
         })
         .catch(error => console.log(error))
     }
 
-    const handleSignUp = event => {
-        event.preventDefault();
-        const form = event.target;
-        const name = form.name.value;
-        const email = form.email.value;
-        const password = form.password.value;
-        console.log(name, email, password)
+    // const handleSignUp = event => {
+    //     event.preventDefault();
+    //     const form = event.target;
+    //     const name = form.name.value;
+    //     const email = form.email.value;
+    //     const password = form.password.value;
+    //     console.log(name, email, password)
 
 
-        createUser(email, password)
-            .then(result => {
-                const user = result.user;
-                console.log('created user', user)
-            })
-            .catch(error => console.log(error))
+    //     createUser(email, password)
+    //         .then(result => {
+    //             const user = result.user;
+    //             console.log('created user', user)
+    //         })
+    //         .catch(error => console.log(error))
 
-    }
+    // }
 
     return (
         <>

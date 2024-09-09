@@ -29,7 +29,19 @@ async function run() {
      const menuCollection = client.db("msrRestaurantDb").collection("menu");
      const reviewsCollection = client.db("msrRestaurantDb").collection("reviews");
      const cartsCollection = client.db("msrRestaurantDb").collection("carts");
-    
+     const usersCollection = client.db("msrRestaurantDb").collection("users");
+    // user Related api
+ // Save a user data in db for user
+ app.post('/signup', async (req, res) => {
+  const userData = req.body
+  const query = { email: userData.email };
+  const existingUser = await usersCollection.findOne(query);
+  if (existingUser) {
+    return res.send({ message: "user already exists", insertedId: null });
+  }
+  const result = await usersCollection.insertOne(userData)
+  res.send(result)
+})
      app.get('/menu', async (req, res) =>{
         const result = await menuCollection.find().toArray();
         res.send(result)
