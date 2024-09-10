@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PROT || 5000;
@@ -30,8 +31,33 @@ async function run() {
      const reviewsCollection = client.db("msrRestaurantDb").collection("reviews");
      const cartsCollection = client.db("msrRestaurantDb").collection("carts");
      const usersCollection = client.db("msrRestaurantDb").collection("users");
+
+  // jwt related api
+  app.post('/jwt', async(req, res) =>{
+    const user = req.body;
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1h"});
+    res.send({ token})
+  })
+
+  // mddleware  
+  const verifyToken = (req, res, next) =>{
+    console.log("inside verify Token", req.headers);;
+    if(!req.headers.authorization){
+      return res.status(401).send({message: "foebidden access"})
+    }
+    const token = req.headers.authorization.split(' ')[1];
+
+    next()
+  }
     // user Related api
  // Save a user data in db for user
+
+ app.get("/users", verifyToken, async(req, res) =>{
+  console.log(req.headers)
+  const result = await usersCollection.find().toArray();
+  res.send(result)
+ })
  app.post('/signup', async (req, res) => {
   const userData = req.body
   const query = { email: userData.email };
@@ -51,7 +77,23 @@ async function run() {
         const result = await reviewsCollection.find().toArray();
         res.send(result)
      })
-
+app.delete('/user/:id', async(req, res) =>{
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)};
+  const result = await usersCollection.deleteOne(query);
+  res.send(result);
+})
+app.patch('/user/admin/:id', async(req, res) =>{
+  const id = req.params.id;
+  const filter = {_id: new ObjectId(id)};
+  const updatedDoc ={
+    $set:{
+      role: 'Admin'
+    }
+  }
+  const result = await usersCollection.updateOne(filter, updatedDoc);
+  res.send(result);
+})
     //  carts Collection
     app.get("/carts", async (req, res) =>{
       const email = req.query.email;

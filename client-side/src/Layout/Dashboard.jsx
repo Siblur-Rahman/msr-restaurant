@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { FaAd, FaCalendar, FaEnvelope, FaHome, FaList, FaRev, FaSearch, FaShoppingCart } from "react-icons/fa";
+import {FaAd, FaBook, FaCalendar, FaEnvelope, FaHome, FaList, FaSearch, FaShoppingCart, FaUsers, FaUtensils } from "react-icons/fa";
 import useCarts from "../hooks/useCarts";
 
 const Dashboard = () => {
@@ -11,26 +11,58 @@ const Dashboard = () => {
             {/*dashboard sidebar*/}
             <div className="w-64 h-screen bg-orange-400">
                 <ul className="menu p-4">
-                    <li><NavLink to="/userHome">
-                        <FaHome />
-                        User Home</NavLink>
-                    </li>
-                    <li><NavLink to="/reservation">
-                        <FaCalendar />
-                        Reservation</NavLink>
-                    </li>
-                    <li><NavLink to="/review">
-                        <FaAd />
-                        Add Review</NavLink>
-                    </li>
-                    <li><NavLink to="/dashboard/cart">
-                        <FaShoppingCart />
-                        My Cart ({cart?.length})</NavLink>
-                    </li>
-                    <li><NavLink to="/dashboard/bookings">
-                        <FaList />
-                        My Booking</NavLink>
-                    </li>
+                    {
+                        isAdmin? 
+                            <>
+                                <li><NavLink to="/dashboard/adminHome">
+                                    <FaHome />
+                                    Admin Home</NavLink>
+                                </li>
+                                <li><NavLink to="/dashboard/addItems">
+                                    <FaUtensils />
+                                    Adashboard/addItems</NavLink>
+                                </li>
+                                <li><NavLink to="/dashboard/manageitems">
+                                    <FaList />
+                                    manage Items</NavLink>
+                                </li>
+                                <li><NavLink to="/dashboard/bookings">
+                                    <FaBook />
+                                    Manage bookings</NavLink>
+                                </li>
+                                <li><NavLink to="/dashboard/users">
+                                    <FaUsers />
+                                    All users</NavLink>
+                                </li>
+                                <li><NavLink to="/dashboard/bookings">
+                                    <FaList />
+                                    My Booking</NavLink>
+                                </li>
+                            </>
+                        :
+                            <>
+                                <li><NavLink to="/userHome">
+                                    <FaHome />
+                                    User Home</NavLink>
+                                </li>
+                                <li><NavLink to="/reservation">
+                                    <FaCalendar />
+                                    Reservation</NavLink>
+                                </li>
+                                <li><NavLink to="/review">
+                                    <FaAd />
+                                    Add Review</NavLink>
+                                </li>
+                                <li><NavLink to="/dashboard/cart">
+                                    <FaShoppingCart />
+                                    My Cart ({cart?.length})</NavLink>
+                                </li>
+                                <li><NavLink to="/dashboard/bookings">
+                                    <FaList />
+                                    My Booking</NavLink>
+                                </li>
+                            </>
+                    }
 
                     {/* shared nav links */}
                     <div className="divider"></div>

@@ -72,7 +72,7 @@ const Navbar = () => {
             <ul
                 tabIndex={0}
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-            {links.map((link, ind) =><li><Link to={link.path}>{link.title}</Link></li>)}
+            {links.map((link, ind) =><li key={ind}><Link to={link.path}>{link.title}</Link></li>)}
             {user && <li><Link to="logout">Log out</Link></li>}
             {!user && <li><Link to="login">Login</Link></li>}
             </ul>
@@ -81,7 +81,7 @@ const Navbar = () => {
         </div>
         <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1">
-            {links.map((link, ind) =><li><Link to={link.path}>{link.title}</Link></li>)}
+            {links.map((link, ind) =><li key={ind}><Link to={link.path}>{link.title}</Link></li>)}
 
             <li><Link to="/dashboard/cart">
                     <button className="btn">

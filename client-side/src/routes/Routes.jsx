@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   createBrowserRouter,
 } from "react-router-dom";
@@ -12,6 +11,7 @@ import Secret from '../pages/shared/Secret';
 import PrivatRoute from './PrivatRoute';
 import Dashboard from '../Layout/Dashboard';
 import Cart from '../pages/Dashboard/Cart/Cart';
+import AllUsers from '../pages/Dashboard/AllUesrs/AllUsers';
 export const router = createBrowserRouter([
     {
       path: "/",
@@ -50,6 +50,10 @@ export const router = createBrowserRouter([
         {
           path:"cart",
           element:<Cart/>
+        },
+        {
+          path:"users",
+          element:<AllUsers/>
         }
       ]
     }
