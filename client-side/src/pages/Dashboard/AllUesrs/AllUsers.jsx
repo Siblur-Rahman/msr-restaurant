@@ -8,11 +8,15 @@ const AllUsers = () => {
     const {data: users = [], refetch} = useQuery({
         queryKey:['users'],
         queryFn: async () =>{
-            const res = await axiosSecure('/users',{
-                headers: {
-                    authorization: `Bear ${localStorage.getItem('access-token')}`
-                }
-            });
+            const res = await axiosSecure('/users'
+              // 68-8 (advanced) verify token and axios interceptor 8:00
+              // ,
+            //   {
+            //     headers: {
+            //         authorization: `Bear ${localStorage.getItem('access-token')}`
+            //     }
+            // }
+          );
             return res.data
         }
     });

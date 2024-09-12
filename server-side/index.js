@@ -42,13 +42,18 @@ async function run() {
 
   // mddleware  
   const verifyToken = (req, res, next) =>{
-    console.log("inside verify Token", req.headers);;
+    console.log("inside verify Token", req.headers.authorization);;
     if(!req.headers.authorization){
       return res.status(401).send({message: "foebidden access"})
     }
     const token = req.headers.authorization.split(' ')[1];
-
-    next()
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoted) =>{
+      if(err){
+        return res.status(401).send({message: 'forbidden access'})
+      }
+      req.decoted = decoted
+      next()
+    })
   }
     // user Related api
  // Save a user data in db for user
