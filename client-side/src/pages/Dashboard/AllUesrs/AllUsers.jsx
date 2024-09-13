@@ -95,7 +95,7 @@ const AllUsers = () => {
                   </td>
                   <th>
                     {
-                        user?.role==="Admin"? "Admin":
+                        user?.role==="admin"? "Admin":
                         <button 
                         onClick={()=>handleRole(user)} 
                         className="btn btn-ghost bg-orange-300 btn-xs">

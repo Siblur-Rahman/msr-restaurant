@@ -33,7 +33,6 @@ const Cart = () => {
                 })
             }
           });
-        fetch(`${import.meta.env.VITE_API_URL}/item`)
     }
     return (
     <div>

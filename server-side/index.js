@@ -63,6 +63,21 @@ async function run() {
   const result = await usersCollection.find().toArray();
   res.send(result)
  })
+
+ app.get('/user/admin/:email', verifyToken, async(req, res) =>{
+    const email = req.params.email;
+    if(email !== req.decoted.email){
+      return res.status(403).send({message: 'unauthorized access'});
+    }
+    const query = {email: email};
+    const user = await usersCollection.findOne(query);
+    let admin = false;
+    if(user){
+      admin = user?.role === 'admin'
+    }
+    // 68-9 Logout unauthorized access and check is admin 8:51
+    res.send({admin})
+ })
  app.post('/signup', async (req, res) => {
   const userData = req.body
   const query = { email: userData.email };
@@ -93,7 +108,7 @@ app.patch('/user/admin/:id', async(req, res) =>{
   const filter = {_id: new ObjectId(id)};
   const updatedDoc ={
     $set:{
-      role: 'Admin'
+      role: 'admin'
     }
   }
   const result = await usersCollection.updateOne(filter, updatedDoc);
