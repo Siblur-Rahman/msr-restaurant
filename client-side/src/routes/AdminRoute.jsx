@@ -1,13 +1,16 @@
 import { Navigate, useLocation } from "react-router-dom";
+import useAdmin from "../hooks/useAdmin";
 import useAuth from "../hooks/useAuth";
 
-const PrivatRoute = (children) => {
-    const {user, loading} = useAuth();
+
+const AdminRoute = ({children}) => {
+    const [user, loading] = useAuth();
+    const [isAdmin, isAdminLoading] = useAdmin();
     let location = useLocation();
-    if(loading){
+    if(loading || isAdminLoading){
         return <progress className="progress w-56"></progress>
     }
-    if(user) {
+    if(user && isAdmin) {
         return children;
     }
     return (
@@ -15,4 +18,4 @@ const PrivatRoute = (children) => {
     );
 };
 
-export default PrivatRoute;
+export default AdminRoute;

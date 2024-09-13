@@ -8,7 +8,7 @@ const AllUsers = () => {
     const {data: users = [], refetch} = useQuery({
         queryKey:['users'],
         queryFn: async () =>{
-            const res = await axiosSecure('/users'
+            const res = await axiosSecure.get('/users'
               // 68-8 (advanced) verify token and axios interceptor 8:00
               // ,
             //   {
