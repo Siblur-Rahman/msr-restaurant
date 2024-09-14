@@ -100,10 +100,15 @@ async function run() {
   const result = await usersCollection.insertOne(userData)
   res.send(result)
 })
-     app.get('/menu', async (req, res) =>{
-        const result = await menuCollection.find().toArray();
-        res.send(result)
-     })
+app.get('/menu', async (req, res) =>{
+    const result = await menuCollection.find().toArray();
+    res.send(result)
+  })
+app.post('/menu', verifyToken, verifyAdmin, async (req, res) =>{
+  const menuData = req.body
+    const result = await menuCollection.insertOne(menuData);
+    res.send(result)
+  })
 
      app.get('/reviews', async(req, res) =>{
         const result = await reviewsCollection.find().toArray();
