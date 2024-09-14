@@ -20,9 +20,9 @@ const Dashboard = () => {
                                     <FaHome />
                                     Admin Home</NavLink>
                                 </li>
-                                <li><NavLink to="/dashboard/addItems">
+                                <li><NavLink to="/dashboard/addItem">
                                     <FaUtensils />
-                                    Adashboard/addItems</NavLink>
+                                    addItems</NavLink>
                                 </li>
                                 <li><NavLink to="/dashboard/manageitems">
                                     <FaList />

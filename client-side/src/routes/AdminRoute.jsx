@@ -4,9 +4,9 @@ import useAuth from "../hooks/useAuth";
 
 
 const AdminRoute = ({children}) => {
-    const [user, loading] = useAuth();
+    const {user, loading} = useAuth();
+    const location = useLocation();
     const [isAdmin, isAdminLoading] = useAdmin();
-    let location = useLocation();
     if(loading || isAdminLoading){
         return <progress className="progress w-56"></progress>
     }
@@ -14,7 +14,7 @@ const AdminRoute = ({children}) => {
         return children;
     }
     return (
-        <Navigate to = "/login" state={{from: location}} replace/>
+        <Navigate to = "/" state={{from: location}} replace/>
     );
 };
 
