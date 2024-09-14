@@ -1,32 +1,75 @@
 import { useForm } from "react-hook-form";
 import SectionTitle from "../../../components/SectionTitle";
+import { FaUtensils } from "react-icons/fa";
+import useAxiosPublic from "../../../hooks/useAxiosPublic";
 
+const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`
 const AddItem = () => {
     const {
         register,
         handleSubmit,
-        watch,
-        formState: { errors },
       } = useForm()
+      const axiosPublic = useAxiosPublic()
     
-      const onSubmit = (data) => console.log(data)
-    
-      console.log(watch("example")) // watch input value by passing the name of it
-    
+      const onSubmit = async (data) => {
+        console.log(data)
+        // image upload to imgbb and then get an url
+        const imageFile = {image: data.image[0]}
+        const res = await axiosPublic.post(image_hosting_api, imageFile, {
+            headers:{"content-type" : 'multipart/form-data'}
+        })
+        console.log(res.data)
+    }
+        
       return (
        <>
             <SectionTitle heading={'Add a item'} subHeading={"What's New?"}/>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <input {...register("name")} />
-                <select className="select select-bordered w-full max-w-xs">
-                    <option {...register("category")} disabled selected>Select a Category</option>
-                    <option value="salad">salad</option>
-                    <option value="pizza">pizza</option>
-                    <option value="soup">soup</option>
-                    <option value="dessert">dessert</option>
-                    <option value="drinks">drinks</option>
-                </select>
-                <input type="submit" />
+                <div className="form-control w-ful my-6">
+                    <label className="label">
+                        <span className="label-text">Recipe name*</span>
+                    </label>
+                    <input placeholder="Recipe Name" className="input input-bordered w-full" {...register("name")} />
+                </div>
+                <div className="flex gap-6">
+                    {/* Category */}
+                    <div className="w-1/2 my-6">
+                        <label className="label">
+                            <span className="label-text">Recipe name*</span>
+                        </label>
+                        <select {...register("category")} className="select select-bordered w-full">
+                            <option disabled selected>Select a Category</option>
+                            <option value="salad">salad</option>
+                            <option value="pizza">pizza</option>
+                            <option value="soup">soup</option>
+                            <option value="dessert">dessert</option>
+                            <option value="drinks">drinks</option>
+                        </select>
+                    </div>
+                    {/* price */}
+                    <div className="w-1/2 my-6">
+                        <label className="label">
+                            <span className="label-text">Price*</span>
+                        </label>
+                        <input  placeholder="Price" className="input input-bordered w-full" {...register("price")} />
+                    </div>
+                </div>
+                {/* Recipe Details */}
+                <label className="form-control">
+                    <div className="label">
+                        <span className="label-text">Recipe Details*</span>
+                    </div>
+                    <textarea {...register("recipe")} className="textarea textarea-bordered h-24" placeholder="Recipe Details*"></textarea>
+                </label>
+                {/* file-input */}
+                <div>
+                    <input {...register('image', {required: true})} type="file" className="file-input w-full max-w-xs my-6" />
+                </div>
+                {/* Submit */}
+                <button className="btn bg-orange-400 text-white">
+                    Add Item <FaUtensils className="ml-3"/>
+                </button>
             </form>
        </>
       )
