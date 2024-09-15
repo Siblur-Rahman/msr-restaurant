@@ -1,11 +1,11 @@
-import { FaEdit, FaTrashAlt, FaUser } from "react-icons/fa";
+import { FaEdit, FaTrashAlt} from "react-icons/fa";
 import SectionTitle from "../../../components/SectionTitle";
 import useMenu from "../../../hooks/useMenu";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 
 const ManageItems = () => {
-    const [menu] = useMenu();
+    const [menu, , refetch] = useMenu();
     const axiosSecure = useAxiosSecure();
     const handleDelete = (id) =>{
         Swal.fire({
@@ -18,7 +18,7 @@ const ManageItems = () => {
             confirmButtonText: "Yes, delete it!"
           }).then((result) => {
             if (result.isConfirmed) {
-                axiosSecure.delete(`/user/${id}`)
+                axiosSecure.delete(`/menu/${id}`)
                 .then(res =>{
                     console.log(res)
                     if(res.data.deletedCount > 0){
@@ -27,7 +27,7 @@ const ManageItems = () => {
                             text: "Your file has been deleted.",
                             icon: "success"
                           });
-                        //   refetch();
+                          refetch();
                     }
                 })
             }
@@ -71,7 +71,7 @@ const ManageItems = () => {
                     $ {item?.price}
                   </th>
                   <th>
-                    <button onClick={()=>handleDelete(item?._id)} className="btn btn-ghost btn-lg bg-orange-500">
+                    <button className="btn btn-ghost btn-lg bg-orange-500">
                         <FaEdit className="text-white"/>
                     </button>
                   </th>
