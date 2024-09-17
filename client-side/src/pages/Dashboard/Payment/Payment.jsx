@@ -1,20 +1,21 @@
-
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import SectionTitle from './../../../components/SectionTitle';
-import {loadStripe} from '@stripe/stripe-js';
-import {Elements} from '@stripe/react-stripe-js';
-import CheckoutForm from './CheckoutForm';
-// Make sure to call `loadStripe` outside of a component’s render to avoid
-// recreating the `Stripe` object on every render.
-const stripePromise = loadStripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
+import CheckoutForm from "./CheckoutForm";
+
+const stripePromise = loadStripe(import.meta.env.VITE_Payment_Gateway_PK);
 const Payment = () => {
-    return (
-        <div>
-            <SectionTitle heading={'Paymet'} subHeading={'Please pay to eat'}/>
-            <Elements stripe={stripePromise}>
-                <CheckoutForm />
-            </Elements>
-        </div>
-    );
+
+  
+
+  return (
+        <>
+        <SectionTitle heading={'Payment'} subHeading={'Please pay to eat'}/>
+          <Elements stripe={stripePromise}>
+            <CheckoutForm/>
+          </Elements>
+          </>
+  );
 };
 
 export default Payment;
