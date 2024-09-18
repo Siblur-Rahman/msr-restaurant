@@ -4,6 +4,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PROT || 5000;
 
 
@@ -30,6 +31,7 @@ async function run() {
      const menuCollection = client.db("msrRestaurantDb").collection("menu");
      const reviewsCollection = client.db("msrRestaurantDb").collection("reviews");
      const cartsCollection = client.db("msrRestaurantDb").collection("carts");
+     const paymentCollection = client.db("msrRestaurantDb").collection("payment");
      const usersCollection = client.db("msrRestaurantDb").collection("users");
 
   // jwt related api
@@ -47,17 +49,17 @@ async function run() {
       return res.status(401).send({message: "unauthorized access"})
     }
     const token = req.headers.authorization.split(' ')[1];
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoted) =>{
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) =>{
       if(err){
         return res.status(401).send({message: 'unauthorized access'})
       }
-      req.decoted = decoted
+      req.decoded = decoded
       next()
     })
   }
   //  use verify admin after verifyToken
  const verifyAdmin = async(req, res, next) =>{
-  const email = req.decoted.email;
+  const email = req.decoded.email;
   const query = {email: email};
   const user = await usersCollection.findOne(query);
   const isAdman = user?.role === 'admin';
@@ -78,7 +80,7 @@ async function run() {
 
  app.get('/user/admin/:email', verifyToken, async(req, res) =>{
     const email = req.params.email;
-    if(email !== req.decoted.email){
+    if(email !== req.decoded.email){
       return res.status(403).send({message: 'forbidden access'});
     }
     const query = {email: email};
@@ -179,6 +181,52 @@ app.patch('/user/admin/:id', verifyAdmin, async(req, res) =>{
       const result = await cartsCollection.deleteOne(query);
       res.send(result)
      })
+
+    //  payment intent
+    app.post('/create-payment-intent', async (req, res) => {
+        const {price} = req.body;
+        const amount = parseInt(price * 100);
+        console.log(amount)
+
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: 'usd',
+      payment_method_types: [
+        "card"
+      ],
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret
+  });
+    })
+
+app.post('/payments', async (req, res) => {
+  const payment = req.body;
+  const paymentResult = await paymentCollection.insertOne(payment);
+
+  //  carefully delete each item from the cart
+  console.log('payment info', payment);
+  const query = {
+    _id: {
+      $in: payment.cartIds.map(id => new ObjectId(id))
+    }
+  };
+
+  const deleteResult = await cartsCollection.deleteMany(query);
+
+  res.send({ paymentResult, deleteResult });
+})
+app.get('/payments/:email', verifyToken, async (req, res) => {
+  const query = { email: req.params.email }
+  console.log(query, req.decoded.email)
+  // if (req.params.email !== req.decoded.email) {
+  //   return res.status(403).send({ message: 'forbidden access' });
+  // }
+  const result = await paymentCollection.find(query).toArray();
+  res.send(result);
+})
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
