@@ -33,6 +33,7 @@ async function run() {
      const cartsCollection = client.db("msrRestaurantDb").collection("carts");
      const paymentCollection = client.db("msrRestaurantDb").collection("payment");
      const usersCollection = client.db("msrRestaurantDb").collection("users");
+    //  const usersCollection = client.db("msrRestaurantDb").collection("users");
 
   // jwt related api
   app.post('/jwt', async(req, res) =>{
@@ -221,11 +222,42 @@ app.post('/payments', async (req, res) => {
 app.get('/payments/:email', verifyToken, async (req, res) => {
   const query = { email: req.params.email }
   console.log(query, req.decoded.email)
-  // if (req.params.email !== req.decoded.email) {
-  //   return res.status(403).send({ message: 'forbidden access' });
-  // }
+  if (req.params.email !== req.decoded.email) {
+    return res.status(403).send({ message: 'forbidden access' });
+  }
   const result = await paymentCollection.find(query).toArray();
   res.send(result);
+})
+
+// state or analytics
+app.get('/admin-stats', verifyToken, verifyAdmin, async(req, res) =>{
+  const users = await usersCollection.estimatedDocumentCount();
+  const menuItems = await menuCollection.estimatedDocumentCount();
+  const orders = await paymentCollection.estimatedDocumentCount();
+
+  // this is not the best way
+  // const payments = await paymentCollection.find().toArray();
+  // const revenue = payments.reduce((total, payment) => total+payment.price, 0)
+
+  // this is the best way
+  const result = await paymentCollection.aggregate([
+    {
+      $group:{
+        _id:null,
+        totalRevenue:{
+          $sum: '$price'
+        }
+      }
+    }
+  ]).toArray();
+
+  const revenue = result.length > 0 ? result[0].totalRevenue : 0;
+  res.send({
+    users,
+    menuItems,
+    orders,
+    revenue
+  })
 })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
